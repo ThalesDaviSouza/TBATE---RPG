@@ -1,0 +1,146 @@
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+header {
+    background-color: #222;
+    color: #f2f2f2;
+    display: flex;
+    padding: 20px 30px;
+    flex-direction: column;
+    justify-content: center;
+
+    & img {
+        aspect-ratio: 16/9;
+    }
+
+    & ul {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+
+        & li a {
+            font-size: 1.3rem;
+            color: #f2f2f2;
+            text-decoration: none;
+        }
+
+        & li a:hover {
+            color: #d09c5b;
+            transition: 500ms ease;
+        }
+
+
+    }
+}
+
+.clear {
+    border: #cecece solid .5px;
+    border-radius: 10px;
+    background-color: #d09c5b;
+    color: #f2f2f2;
+    transition: ease 400ms;
+}
+
+section {
+    margin-bottom: 30px;
+}
+
+#app {
+    padding: 5%;
+    text-align: center;
+
+    & .damage, .mods {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    & .title-div {
+        justify-content: center;
+    }
+
+    & .title-txt {
+        text-align: center;
+    }
+
+    & .list {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    & .results {
+        margin: 30px 0 0 30px;
+        text-align: left;
+        font-size: medium;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+}
+
+button:hover {
+    transform: scale(1.1);
+    transition: ease 400ms;
+}
+
+@media (min-width: 600px) {
+    header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: baseline;
+
+        & img {
+            height: 10dvh;
+        }
+    }
+
+    #app {
+        & .title-div {
+            justify-content: left;
+        }
+    
+        & .title-txt {
+            text-align: left;
+        }
+
+        & .damage, .mods {
+            align-items: start;
+        }
+
+        & .list {
+            align-items: start;
+        }
+    }
+}
+
+@media (min-width: 1200px) {
+    #app {
+        & .damage, .mods {
+            padding-left: 20px;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 10%;
+        }
+
+        & .list {
+            align-items: start;
+        }
+
+        & .mods {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 10%;
+        }
+
+        & .results {
+            margin: 30px 0 0 10px;
+        }
+    }
+}
