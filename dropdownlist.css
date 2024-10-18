@@ -1,0 +1,15 @@
+.bg-dark-dropdown{
+    background-color: rgb(40, 40, 46);
+}
+
+/* Chrome, Safari, Edge, Opera */
+.bg-dark-dropdown input::-webkit-outer-spin-button,
+.bg-dark-dropdown input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.bg-dark-dropdown input[type=number] {
+  -moz-appearance: textfield;
+}

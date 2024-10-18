@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link rel="shortcut icon" href="images/icon.png" type="image/x-icon">
     <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="dropdownlist.css">
     <title>Tabte - RPG</title>
 </head>
 <body>
@@ -91,7 +92,7 @@
             </div>
         </section>
         <section class="results">
-            <span><strong>Custo: {{ getTotalCost() }}</strong></span>
+            <span><strong :class="[ !isCostValid() ? 'text-danger' : '' ]">Custo: {{ getTotalCost() }}</strong></span>
             <span><strong>Dados: {{ getDicesToRoll() }}</strong></span>
             <span><strong>Buffs: {{ getBuffsToRoll() }}</strong></span>
             <span><strong>Debuffs: {{ getDebuffsToRoll() }}</strong></span>
@@ -139,6 +140,23 @@
             </div>
             </div>
         </div>
+
+        <div class="position-fixed bottom-0 end-0 m-3">
+            <div class="btn-group dropstart">
+                <button type="button" 
+                        class="btn btn-outline-info rounded-pill" 
+                        data-bs-toggle="dropdown" 
+                        aria-expanded="false">
+                  Gasto Max. {{ getCostMaxManaPerRound() }}
+                </button>
+                <ul class="dropdown-menu bg-dark-dropdown text-light row">
+                    <li class="col-12 d-flex justify-around">
+                        <span class="col-9">Mana Máx.:</span>
+                        <input class="bg-dark-dropdown text-light col-3 border border-0" type="number" v-model="characterMaxMana" />
+                    </li>
+                </ul>
+            </div>  
+        </div>
     </main>
 
 </body>
@@ -148,6 +166,7 @@
 <script src="./packBaseModifier.js"></script>
 <script src="./packDesviantSimpleModifier.js"></script>
 <script src="./packDesviantComplexModifier.js"></script>
+
 <script>
   const { createApp, ref } = Vue
 
@@ -172,6 +191,7 @@
         const modifiers = ref([]);
         const modifierToAdd = ref(null);
         const effectSelected = ref(null);
+        const characterMaxMana = ref(0);
 
         function addCost(added, valueCost){
             if(added === true){
@@ -219,7 +239,7 @@
             if(modifiers.value.length > 0)
                 return damageCost.value + modifiers.value.map(m => m.data.cost).reduce((a,b) => a + b)
             else
-                return damageCost;
+                return damageCost.value;
         }
 
         function getDicesToRoll(){
@@ -255,6 +275,19 @@
             return debuffsStr;
         }
 
+        function getCostMaxManaPerRound(){
+            if(characterMaxMana.value === null){
+                return '??';
+            }
+            else{
+                return Math.ceil(characterMaxMana.value / 4); 
+            }
+        }
+
+        function isCostValid(){
+            return getCostMaxManaPerRound() >= getTotalCost();  
+        }
+
         return {
             packsDamage,
             packsModifier,
@@ -263,6 +296,8 @@
             modifiers,
             modifierToAdd,
             effectSelected,
+            characterMaxMana,
+
             addCost,
             addModifier,
             selectModifier,
@@ -271,7 +306,9 @@
             getTotalCost,
             getDicesToRoll,
             getBuffsToRoll,
-            getDebuffsToRoll
+            getDebuffsToRoll,
+            getCostMaxManaPerRound,
+            isCostValid
         }
     }
   }).mount('#app')
