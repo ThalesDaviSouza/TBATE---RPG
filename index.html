@@ -20,9 +20,9 @@
             <li><a href="https://tbate.fandom.com/wiki/The_Beginning_After_The_End_Wiki">Wiki da Novel</a></li>
         </ul>
     </header>
-    <main id="app">
-        <section>
-            <div class="title-div d-flex flex-inline gap-3 m-1">
+    <main id="app" class="p-4 pb-2">
+        <section class="mb-3">
+            <div class="title-div d-flex flex-inline gap-3 m-1 my-0">
                 <h4>Dano</h4>
                 <button class="clear" @click="(s) => addCost(false, 0)">
                     Limpar seleção
@@ -91,7 +91,7 @@
                 </div>
             </div>
         </section>
-        <section class="results">
+        <section class="results mb-0">
             <span><strong :class="[ !isCostValid() ? 'text-danger' : '' ]">Custo: {{ getTotalCost() }}</strong></span>
             <span><strong>Dados: {{ getDicesToRoll() }}</strong></span>
             <span><strong>Buffs: {{ getBuffsToRoll() }}</strong></span>
@@ -168,7 +168,7 @@
 <script src="./packDesviantComplexModifier.js"></script>
 
 <script>
-  const { createApp, ref } = Vue
+  const { createApp, ref, watch } = Vue
 
   createApp({
     setup() {
@@ -191,7 +191,18 @@
         const modifiers = ref([]);
         const modifierToAdd = ref(null);
         const effectSelected = ref(null);
-        const characterMaxMana = ref(0);
+
+        let maxMana = localStorage.getItem("maxMana");
+        if(maxMana == null)
+            maxMana = 0;
+        const characterMaxMana = ref(maxMana);
+
+        watch(characterMaxMana, async(newValue, oldValue) => {
+            if(typeof newValue === "number"){
+                console.log('New value', newValue)
+                localStorage.setItem("maxMana", newValue);
+            }
+        })
 
         function addCost(added, valueCost){
             if(added === true){
