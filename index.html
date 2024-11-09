@@ -93,7 +93,11 @@
         </section>
         <section class="results mb-0">
             <span><strong :class="[ !isCostValid() ? 'text-danger' : '' ]">Custo: {{ getTotalCost() }}</strong></span>
-            <span><strong>Dados: {{ getDicesToRoll() }}</strong></span>
+            <span>
+                <strong>Dados: {{ getDicesToRoll }}</strong>
+                <button @click="rolllDices()">Roll</button>
+            </span>
+            <span v-if="dicesResult != ''">Resultado: {{ dicesResult }}</span>
             <span><strong>Buffs: {{ getBuffsToRoll() }}</strong></span>
             <span><strong>Debuffs: {{ getDebuffsToRoll() }}</strong></span>
         </section>
@@ -166,9 +170,10 @@
 <script src="./packBaseModifier.js"></script>
 <script src="./packDesviantSimpleModifier.js"></script>
 <script src="./packDesviantComplexModifier.js"></script>
+<script src="./diceRoller.js"></script>
 
 <script>
-  const { createApp, ref, watch } = Vue
+  const { createApp, ref, watch, computed } = Vue
 
   createApp({
     setup() {
@@ -191,19 +196,15 @@
         const modifiers = ref([]);
         const modifierToAdd = ref(null);
         const effectSelected = ref(null);
+        const dicesResult = ref('');
 
         let maxMana = localStorage.getItem("maxMana");
-        if(maxMana == null)
+        if(maxMana == null){
             maxMana = 0;
+        }
         const characterMaxMana = ref(maxMana);
 
-        watch(characterMaxMana, async(newValue, oldValue) => {
-            if(typeof newValue === "number"){
-                console.log('New value', newValue)
-                localStorage.setItem("maxMana", newValue);
-            }
-        })
-
+        
         function addCost(added, valueCost){
             if(added === true){
                 damageCost.value = valueCost;
@@ -253,14 +254,14 @@
                 return damageCost.value;
         }
 
-        function getDicesToRoll(){
+        const getDicesToRoll = computed(() => {
             let dicesStr = damageTier.value != null ? damageTier.value.dice + " " : "";
             let modifierDices = modifiers.value.filter(x => x.type == 4).map(x => '+ ' + x.data.effects.dano + ' ') 
             if(modifierDices.length > 0)
                 dicesStr += modifierDices.reduce((a,b) => a + b);
 
             return dicesStr;
-        }
+        })
 
         function getBuffsToRoll(){
             let buffsStr = "";
@@ -299,7 +300,25 @@
             return getCostMaxManaPerRound() >= getTotalCost();  
         }
 
+        function rolllDices(){
+            let dicesResults = getResultsFormula(getDicesToRoll.value);
+            let stringResults = printDiceResult(dicesResults);
+            dicesResult.value = stringResults;
+        }
+        
+        watch(characterMaxMana, async(newValue, oldValue) => {
+            if(typeof newValue === "number"){
+                console.log('New value', newValue)
+                localStorage.setItem("maxMana", newValue);
+            }
+        })
+
+        watch(getDicesToRoll, async(newValue, oldValue) => {
+            dicesResult.value = '';
+        })
+
         return {
+            // Refs
             packsDamage,
             packsModifier,
             damageCost,
@@ -308,18 +327,23 @@
             modifierToAdd,
             effectSelected,
             characterMaxMana,
+            dicesResult,
 
+            // Functions
             addCost,
             addModifier,
             selectModifier,
             modifierGetEffect,
             removeModifier,
             getTotalCost,
-            getDicesToRoll,
             getBuffsToRoll,
             getDebuffsToRoll,
             getCostMaxManaPerRound,
-            isCostValid
+            isCostValid,
+            rolllDices,
+
+            // Computed
+            getDicesToRoll,
         }
     }
   }).mount('#app')
